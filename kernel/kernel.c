@@ -1,7 +1,28 @@
-#include "../drivers/screen.h"
+#include "../cpu/isr.h"
+#include "../libc/string.c"
+#include "../cpu/timer.h"
+#include "../drivers/keyboard.h"
 
 void main() {
     clear_screen();
-    kprint_at("Welcome to TeakOS!", (MAX_COLS - 18) / 2, 8);
-    kprint_at("Press any key to continue...", (MAX_COLS - 28) / 2, 12);
+    isr_install();
+    irq_install();
+
+    kprint("Welcome to TeakOS!\n> ");
+
+    strcmp("12", "12");
+}
+
+void user_input(char *input) {
+    if (strcmp(input, "END") == 0) {
+        kprint("Stopping the CPU. Bye!\n");
+        asm volatile("hlt");
+    }
+
+    if (strcmp(input, "CLEAR") == 0) {
+        clear_screen();
+    }
+    kprint("You said: ");
+    kprint(input);
+    kprint("\n> ");
 }
