@@ -3,26 +3,36 @@
 #include "../cpu/timer.h"
 #include "../drivers/keyboard.h"
 
+char *terminal_line;
+
 void main() {
+    terminal_line = "> ";
     clear_screen();
     isr_install();
     irq_install();
 
-    kprint("Welcome to TeakOS!\n> ");
-
-    strcmp("12", "12");
+    kprint("Welcome to TeakOS!\n");
+    kprint(terminal_line);
 }
 
 void user_input(char *input) {
-    if (strcmp(input, "END") == 0) {
+    char* cmd = strcopy(input);
+    to_lower(cmd);
+    if (strcmp(input, "end") == 0) {
         kprint("Stopping the CPU. Bye!\n");
         asm volatile("hlt");
     }
 
-    if (strcmp(input, "CLEAR") == 0) {
+    if (strcmp(input, "clear") == 0) {
         clear_screen();
+        kprint(terminal_line);
+        return;
     }
-    kprint("You said: ");
-    kprint(input);
-    kprint("\n> ");
+    kprint_c(input, 0x03);
+    kprint("\n");
+    kprint(terminal_line);
+}
+
+char* get_terminal_line() {
+    return terminal_line;
 }

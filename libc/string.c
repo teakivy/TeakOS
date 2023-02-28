@@ -65,3 +65,28 @@ int strcmp(char s1[], char s2[]) {
     }
     return s1[i] - s2[i];
 }
+
+void to_lower(char* str) {
+    for (int i = 0; i < strlen(str); i++) {
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+            str[i] |= 0x20;
+        }
+    }
+}
+
+void to_upper(char* str) {
+    for (int i = 0; i < strlen(str); i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            str[i] &= ~0x20;
+        }
+    }
+}
+
+char* strcopy(char* str) {
+    char res[strlen(str)];
+    for (int i = 0; i < strlen(str); i++) {
+        res[i] = str[i];
+    }
+
+    return res;
+}
