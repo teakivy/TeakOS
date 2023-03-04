@@ -2,6 +2,7 @@
 #include "../libc/string.c"
 #include "../cpu/timer.h"
 #include "../drivers/keyboard.h"
+#include "cmdhandler.h"
 
 char *terminal_line;
 
@@ -16,8 +17,7 @@ void main() {
 }
 
 void user_input(char *input) {
-    char* cmd = strcopy(input);
-    to_lower(cmd);
+    add_command_to_history(input);
     if (strcmp(input, "end") == 0) {
         kprint("Stopping the CPU. Bye!\n");
         asm volatile("hlt");
@@ -25,6 +25,14 @@ void user_input(char *input) {
 
     if (strcmp(input, "clear") == 0) {
         clear_screen();
+        kprint(terminal_line);
+        return;
+    }
+    if (strcmp(input, "overclock to 10ghz and make a fire") == 0) {
+        set_terminal_color(0x04);
+        kprint_c("Ok, ");
+        kprint_c("done!");
+        kprint("\n");
         kprint(terminal_line);
         return;
     }

@@ -10,6 +10,8 @@ int get_offset(int col, int row);
 int get_offset_row(int offset);
 int get_offset_col(int offset);
 
+char TERMINAL_COLOR = 0x0f;
+
 /**********************************************************
  * Public Kernel API functions                            *
  **********************************************************/
@@ -19,7 +21,7 @@ int get_offset_col(int offset);
  * If col, row, are negative, we will use the current offset
  */
 void kprint_at(char *message, int col, int row) {
-    kprint_at_c(message, col, row, WHITE_ON_BLACK);
+    kprint_at_c(message, col, row, TERMINAL_COLOR);
 }
 void kprint_at_c(char *message, int col, int row, char color) {
     /* Set cursor if col/row are negative */
@@ -43,7 +45,7 @@ void kprint_at_c(char *message, int col, int row, char color) {
 }
 
 void kprint(char *message) {
-    kprint_c(message, WHITE_ON_BLACK);
+    kprint_c(message, TERMINAL_COLOR);
 }
 void kprint_c(char *message, char color) {
     kprint_at_c(message, -1, -1, color);
@@ -57,6 +59,10 @@ void kprint_backspace() {
     if (strlen(get_terminal_line()) > col) return;
 
     print_char(0x08, col, row, WHITE_ON_BLACK);
+}
+
+void set_terminal_color(char color) {
+    TERMINAL_COLOR = color;
 }
 
 

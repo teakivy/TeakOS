@@ -5,6 +5,7 @@
 #include "../libc/string.h"
 #include "../libc/function.h"
 #include "../kernel/kernel.h"
+#include "../kernel/cmdhandler.h"
 
 #define BACKSPACE 0x0E
 #define ENTER 0x1C
@@ -14,6 +15,9 @@
 #define LEFT_SHIFT_UP 170
 #define RIGHT_SHIFT_UP 182
 #define CTRL_UP 157
+
+#define UP_ARROW 0x48
+#define DOWN_ARROW 0x50
 
 static char key_buffer[256];
 
@@ -37,6 +41,9 @@ const char shift_sc_ascii[] = { '?', '?', '!', '@', '#', '$', '%', '^',
 
 int shift_held = 0;
 int ctrl_held = 0;
+
+int command_to = 0;
+char zbuffer[256];
 
 static void keyboard_callback(registers_t regs) {
     /* The PIC leaves us the scancode in port 0x60 */
@@ -64,6 +71,30 @@ static void keyboard_callback(registers_t regs) {
         ctrl_held = 0;
         return;
     }
+
+    if (scancode == UP_ARROW) {
+        if (command_to == 0) {
+            strcpy(zbuffer, key_buffer);
+        }
+        if (command_to < get_command_history_length()) command_to++;
+        set_currently_typing(get_command_back(command_to));
+        
+        strcpy(key_buffer, get_command_back(command_to));
+        return;
+    }
+
+    if (scancode == DOWN_ARROW) {
+        if (command_to > 0) command_to--;
+        char *cmd = get_command_back(command_to);
+        if (command_to == 0 && zbuffer[0] != '\0') {
+            strcpy(key_buffer, zbuffer);
+            strcpy(cmd, zbuffer);
+        }
+        set_currently_typing(cmd);
+
+        strcpy(key_buffer, cmd);
+        return;
+    }
     
     if (scancode > SC_MAX) return;
     if (scancode == BACKSPACE) {
@@ -73,6 +104,7 @@ static void keyboard_callback(registers_t regs) {
         kprint("\n");
         user_input(key_buffer); /* kernel-controlled function */
         key_buffer[0] = '\0';
+        command_to = 0;
     } else {
         char letter = sc_ascii[(int)scancode];
         if (shift_held && letter != ' ') letter = shift_sc_ascii[(int)scancode];

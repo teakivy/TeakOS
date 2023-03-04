@@ -82,11 +82,17 @@ void to_upper(char* str) {
     }
 }
 
-char* strcopy(char* str) {
-    char res[strlen(str)];
-    for (int i = 0; i < strlen(str); i++) {
-        res[i] = str[i];
+void strcpy(char* dest, char* src) {
+    for (int i = 0; i < strlen(src); i++) {
+        dest[i] = src[i];
     }
 
-    return res;
+    dest[strlen(src)] = '\0';
+}
+
+void strcat(char* dest, char* src) {
+    int len = strlen(dest);
+    for (int i = 0; i < strlen(src); i++) {
+        dest[len + i] = src[i];
+    }
 }
