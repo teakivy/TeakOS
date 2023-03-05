@@ -1,5 +1,7 @@
 #include "string.h"
 
+#define NULL 0
+
 /**
  * Converts an int to a string
  */
@@ -95,4 +97,47 @@ void strcat(char* dest, char* src) {
     for (int i = 0; i < strlen(src); i++) {
         dest[len + i] = src[i];
     }
+}
+
+char* strtok(char* str, char* delim) {
+    static char* src = NULL;
+    char* p, *ret = 0;
+
+    if (str != NULL) src = str;
+    if (src == NULL) return NULL;
+
+    if ((p = strpbrk(src, delim)) != NULL) {
+        *p = 0;
+        ret = src;
+        src = ++p;
+    } else if (*src) {
+        ret = src;
+        src = NULL;
+    }
+
+    return ret;
+}
+
+char* strpbrk(char* str, char* accept) {
+    char* p, *s;
+    for (p = str; *p; ++p) {
+        for (s = accept; *s; ++s) {
+            if (*p == *s) return p;
+        }
+    }
+    return NULL;
+}
+
+int strspn(char* str, char* accept) {
+    char* p, *s;
+    int count = 0;
+    for (p = str; *p; ++p) {
+        for (s = accept; *s; ++s) {
+            if (*p == *s) {
+                count++;
+                break;
+            }
+        }
+    }
+    return count;
 }

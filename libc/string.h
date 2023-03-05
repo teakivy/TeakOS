@@ -11,5 +11,8 @@ void to_lower(char* str);
 void to_upper(char* str);
 void strcpy(char* dest, char* src);
 void strcat(char* dest, char* src);
+char* strtok(char* str, char* delim);
+char* strpbrk(char* str, char* accept);
+int strspn(char* str, char* accept);
 
 #endif
